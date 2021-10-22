@@ -5,7 +5,7 @@
 Print internet connectivity status of the network \ device running it
 
 Sample Output:
-```
+```bash
 2021-10-22 12:13:35.434397 no connected  
 2021-10-22 12:13:36.635399  connected  <2s
 
