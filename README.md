@@ -16,14 +16,17 @@ Sample Output:
 
 ```
 
-## Howto
+## Usage
+### Run locally
 1. Clone the repository
 1. Install `requirements.py`
 1. Run: `main.py`
 
 I'd recommend to do this using virtual environment
 
+### Run with Docker
+1. Run `docker run -d --name connectivity-monitor connectivity-monitor`
+1. Check statud with `docker logs connectivity-monitor`
 ## Future plans
-1. Support Docker
-2. WebUI
-3. Send email alerts
+1. WebUI
+1. Send email alerts
