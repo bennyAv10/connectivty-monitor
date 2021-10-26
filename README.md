@@ -16,17 +16,24 @@ Sample Output:
 
 ```
 
+### Format
+
+* Web [Default] run as HTTP server using port 5000 by default
+  * Can set port with port parameter
+* Cli - with format=cli parameter
+
 ## Usage
 ### Run locally
 1. Clone the repository
-1. Install `requirements.py`
-1. Run: `main.py`
+1. Install dependencies from `requirements.txt`
+    * Virtual env is recommended
+1. Run: `main.py [--port PORT] {web | cli}`
 
 I'd recommend to do this using virtual environment
 
 ### Run with Docker
-1. Run `docker run -d --name connectivity-monitor connectivity-monitor`
+1. Run `docker run -d [--env {cli | web}] [--port PORT] --name connectivity-monitor connectivity-monitor`
 1. Check statud with `docker logs connectivity-monitor`
+
 ## Future plans
-1. WebUI
 1. Send email alerts

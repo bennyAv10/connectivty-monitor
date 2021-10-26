@@ -1,9 +1,25 @@
 #!/usr/bin/env python3
 
+import argparse
 import datetime
+import typing
+from flask import Flask
 import requests
+import threading
 import time
+from typing import Callable
 
+app = Flask(__name__)
+
+output = []
+output_lock = threading.Lock()
+@app.route("/")
+def hello_html():
+    output_lock.acquire()
+    s = '<br>'.join(output)
+    output_lock.release()
+
+    return f"<h4>{s}</h4>"
 
 def is_connected() -> bool:
     """
@@ -11,7 +27,7 @@ def is_connected() -> bool:
     :return: True is connected, False otherwise
     """
     try:
-        response = requests.get('http://google.com', timeout=1)
+        response = requests.get('http://example.com', timeout=1)
 
         if response.status_code == requests.codes.OK:
             return True
@@ -21,7 +37,7 @@ def is_connected() -> bool:
         return False
 
 
-def monitor_connectivity():
+def monitor_connectivity(handler: Callable[[str], None]):
     """
      Continuously monitor connectivity
     """
@@ -67,16 +83,40 @@ def monitor_connectivity():
                     disconnected_len_str = '<8.5h'
                 else:
                     disconnected_len_str = '>30s'
-
-            print(datetime.datetime.now(), " connected " if new_state else "no connected ", disconnected_len_str)
+            msg = f'{datetime.datetime.now()}  {"connected" if new_state else "no connected "} {disconnected_len_str}'
+            handler(msg)
 
         cycles += 1
         previous_state = new_state
 
-def main():
-    print("hello world")
-    monitor_connectivity()
+def web_handler(msg: str):
+    global output
+    
+    output_lock.acquire()
+    output.append(msg)
+    output_lock.release()
 
+def cli_handler(msg: str):
+    print(msg)
 
+def parse_args():
+    parser = argparse.ArgumentParser(description='Monitor internet connectivity')
+    parser.add_argument('format', type=str, choices=['web', 'cli'])
+    parser.add_argument('--port', '-p', type=int, help='the seerver port for web option', required=False)
+
+    return parser.parse_args()
+
+def main():   
+    print("hello world")    
+    #monitor_connectivity()
+    args = parse_args()
+    if args.format == 'web':
+        monitoring_thread = threading.Thread(target=monitor_connectivity, args=(web_handler,))
+        monitoring_thread.start()
+        app.run(host='0.0.0.0', port=args.port)
+        monitoring_thread.join()
+    else:
+        monitor_connectivity(cli_handler)
+        
 if __name__ == "__main__":
     main()
