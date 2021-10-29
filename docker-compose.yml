@@ -1,0 +1,9 @@
+version: "3.1"
+services:
+  connectivity-monitor:
+    environment:
+      format: "${format:-web}"
+      port: ${port:-5000}
+    build: .
+    ports:
+      - "${port:-5000}:${port:-5000}"
